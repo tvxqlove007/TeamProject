@@ -6,6 +6,67 @@
 
 using namespace std;
 
+// Converts time_t into string of format YY-MM-DD HH:MM:SS
+string Utils::string toString(time_t &time){
+	tm * timeinfo = localtime(&time);
+	int year = timeinfo->tm_year + 1900;
+	int month = timeinfo->tm_mon + 1;
+	int day = timeinfo->tm_mday;
+	int hour = timeinfo->tm_hour;
+	int min = timeinfo->tm_min;
+	int sec = timeinfo->tm_sec;
+
+	string dateStr = to_string(year) + "-" + to_string(month) + "-" + to_string(day);
+	string timeStr = to_string(hour) + ":" + to_string(min) + ":" + to_string(sec);
+
+	return dateStr + " " + timeStr;
+}
+
+// Parse string of format YY-MM-DD HH:MM:SS into time_t
+string Utils::time_t fromString(string str){
+	// separate date and time
+	istringstream dateTimeStream(str);
+	string date;
+	getline(dateTimeStream, date, ' ');
+	string time;
+	getline(dateTimeStream, time, ' ');
+
+	// parse date
+	istringstream dateStream(date);
+	string yearStr;
+	getline(dateStream, yearStr, '-');
+	int year = stoi(yearStr);
+	string monthStr;
+	getline(dateStream, monthStr, '-');
+	int month = stoi(monthStr);
+	string dayStr;
+	getline(dateStream, dayStr, '-');
+	int day = stoi(dayStr);
+
+	// parse time
+	istringstream timeStream(time);
+	string hourStr;
+	getline(timeStream, hourStr, ':');
+	int hour = stoi(hourStr);
+	string minStr;
+	getline(timeStream, minStr, ':');
+	int min = stoi(minStr);
+	string secStr;
+	getline(timeStream, secStr, ':');
+	int sec = stoi(secStr);
+
+	struct tm timeinfo = { 0 };
+
+	timeinfo.tm_year = year - 1900;
+	timeinfo.tm_mon = month - 1;
+	timeinfo.tm_mday = day;
+	timeinfo.tm_hour = hour;
+	timeinfo.tm_min = min;
+	timeinfo.tm_sec = sec;
+
+	return mktime(&timeinfo);
+}
+
 // Converts book object into csv (comma separated value) entry
 string Utils::toCsv(Book &b) {
 	time_t dateAdded = b.getDateAdded();
