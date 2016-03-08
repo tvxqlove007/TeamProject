@@ -52,6 +52,29 @@ void BookDAO::insert(string isbn, string title, string author, string publisher,
 	numBooks++;
 }
 
+void BookDAO::void delete_by_isbn(string isbn)
+	{
+		int i = 0;
+		for (i = 0; i < numBooks; i++)
+		{
+			if (books[i].getIsbn() == isbn)
+			{
+				break;
+			}
+		}
+		if (i == numBooks)
+		{
+			cout << "Book doesn't exits" <<endl;
+			return;
+		}
+		for (int j = i + 1; j < numBooks; j++)
+		{
+			books[j - 1] = books[j];
+		}
+		numBooks--;
+	}
+};
+
 Book * BookDAO::getBooksByISBN(string keyword) {
 	Book * possibleBooks = new Book[1024];
 	int numberPossibleBooks = 0;
