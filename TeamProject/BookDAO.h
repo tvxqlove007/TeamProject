@@ -28,6 +28,7 @@ public:
 	//CREATE
 	void insert(string isbn, string title, string author, string publisher, 
 				int quantityOnHand, double wholesaleCost, double retailPrice);
+	void delete_by_isbn(string isbn);
 
 	//READ
 	Book * getBooks() { return books; };
