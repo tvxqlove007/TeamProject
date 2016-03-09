@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include <string>
 #include <iostream>
+#include<time.h>
 #include "Book.h"
 #include "Utils.h"
 
