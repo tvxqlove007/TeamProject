@@ -2,6 +2,7 @@
 #pragma once
 #include "stdafx.h"
 #include <string>
+#include<time.h>
 #include "Book.h"
 
 using namespace std;
@@ -12,7 +13,8 @@ using namespace std;
 class Utils {
 
 public:
-
+	string toString(time_t &time);
+	time_t fromString(string str);
 	static string toCsv(Book &b);
 	static Book fromCsv(string line);
 	static void swap(Book * a, Book * b);
