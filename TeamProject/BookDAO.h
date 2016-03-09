@@ -14,7 +14,6 @@ using namespace std;
 class BookDAO {
 private:
 	string filePath;
-	// FIXME use map instead of array
 	Book books[1024];
 	int numBooks = 0;
 
