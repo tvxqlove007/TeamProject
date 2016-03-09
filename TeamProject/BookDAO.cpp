@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include<iostream>
 #include<fstream>
+#include<time.h>
 #include<sstream>
 #include<string>
 #include "Book.h"
