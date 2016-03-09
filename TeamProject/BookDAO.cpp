@@ -43,7 +43,13 @@ void BookDAO::close() {
 	
 void BookDAO::insert(string isbn, string title, string author, string publisher, 
 					 int quantityOnHand, double wholesaleCost, double retailPrice) {
-		// TODO validate that no book exists by this isbn number.
+		//  Validated  that no book exists by this isbn number.
+	Book *existingBook = get_by_isbn(isbn);
+		if (existingBook != nullptr){
+			cout << "Book already exist by this isbn number." << endl;
+			return;
+		}
+		
 	time_t  dateAdded = time(NULL);
 	Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
 	cout << "Inserting ";
@@ -51,6 +57,29 @@ void BookDAO::insert(string isbn, string title, string author, string publisher,
 	books[numBooks] = b;
 	numBooks++;
 }
+
+void BookDAO::void delete_by_isbn(string isbn)
+	{
+		int i = 0;
+		for (i = 0; i < numBooks; i++)
+		{
+			if (books[i].getIsbn() == isbn)
+			{
+				break;
+			}
+		}
+		if (i == numBooks)
+		{
+			cout << "Book doesn't exits" <<endl;
+			return;
+		}
+		for (int j = i + 1; j < numBooks; j++)
+		{
+			books[j - 1] = books[j];
+		}
+		numBooks--;
+	}
+};
 
 Book * BookDAO::getBooksByISBN(string keyword) {
 	Book * possibleBooks = new Book[1024];
