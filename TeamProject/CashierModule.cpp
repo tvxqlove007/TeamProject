@@ -9,6 +9,8 @@
 #include "Module.h"
 #include "CashierModule.h"
 
+using namespace std;
+
 CashierModule * CashierModule::cashierModule;
 
 CashierModule::CashierModule() {

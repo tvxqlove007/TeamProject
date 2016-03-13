@@ -13,23 +13,28 @@ using namespace std;
 
 class BookDAO {
 private:
-	string filePath;
-	// FIXME use map instead of array
 	Book books[1024];
 	int numBooks = 0;
 
-	void initialize();
 	void storeToFile();
-
+	static BookDAO * bookDAO;
 public:
-	BookDAO(string f);
+	static int numPossibleBooks;
+
+	BookDAO();
 	void close();
-	
+	static BookDAO * getInstance();
+	int getNumBooks() { return numBooks; }
+
 	//CREATE
-	void insert(string isbn, string title, string author, string publisher, 
-				int quantityOnHand, double wholesaleCost, double retailPrice);
+	void insert(string isbn, string title, string author, string publisher,
+		int quantityOnHand, double wholesaleCost, double retailPrice);
+	void update(string isbn, string title, string author, string publisher,
+		int quantityOnHand, double wholesaleCost, double retailPrice);
+	void deleteByIsbn(string isbn);
 
 	//READ
+	bool existsByIsbn(string isbn);
 	Book * getBooks() { return books; };
 	Book * getBooksByISBN(string keyword);
 	Book * getBooksByTitle(string keyword);

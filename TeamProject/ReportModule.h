@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Module.h"
+#include "Book.h"
 
 using namespace std;
 
@@ -21,6 +22,18 @@ public:
 	static ReportModule * getInstance();
 
 	void display();
+
+	void displayInventoryListing();
+	void displayInventoryWholesaleValue();
+	void displayInventoryRetailValue();
+	void displayListingByQuantity();
+	void displayListingByCost();
+	void displayListingByAge();
+
+	template<class Type> void printOut(Type value);
+	template<> void printOut(string value);
+	void printBook(Book book);
+
 };
 
 #endif // REPORT_MODULE_H

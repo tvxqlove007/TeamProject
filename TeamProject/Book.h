@@ -31,7 +31,8 @@ private:
 	double retailPrice;
 public:
 	Book();
-	Book(string isbn, string title, string author, string publisher,time_t dateAdded, int quantity, double wholesaleCost, double retailPrice);
+	Book(string isbn, string title, string author, string publisher,time_t dateAdded,
+			int quantity, double wholesaleCost, double retailPrice);
 	
 	void setIsbn(string i) { isbn = i;	}
 	void setTitle(string t) { title = t; }
@@ -49,7 +50,6 @@ public:
 	int getQuantityOnHand() { return quantityOnHand; }
 	double getWholesaleCost() { return wholesaleCost; }
 	double getRetailPrice() { return retailPrice; }
-	void show();
 };
 
 #endif
