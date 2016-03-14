@@ -10,7 +10,7 @@ using namespace std;
 /*
 ISBN: This is the International Standard Book Number. It is a unique number assigned to each book by the publisher.
 Title: The title of the book.
-Author: The book’s author.
+Author: The bookâ€™s author.
 Publisher: The company that publishes the book.
 Date Added: The date the book was added to the inventory.
 Quantity-On-Hand: The number of copies of the book in inventory.
@@ -30,26 +30,76 @@ private:
 	double wholesaleCost;
 	double retailPrice;
 public:
+	//Exception class for empty title
+	class EmptyTitle{};
+
+	//Exception class for empty author
+	class EmptyAuthor{};
+
+	//Exception class for empty publisher
+	class EmptyPublisher{};
+
+	//Exception class for non pisitive quantity
+	class NonPositiveQuantity{
+	private: 
+			int quantity;
+	public:
+		NonPositiveQuantity(int q){
+			quantity = q;
+		}
+		int getValue(){
+			return quantity;
+		}
+	};
+
+	//Exception class for non pisitive wholesalecost
+	class NonPositiveWholesalecost
+	{
+	private:
+		int wholesalecost;
+	public:
+		NonPositiveWholesalecost(int w){
+			wholesalecost = w;
+		}
+		int getValue(){
+			return wholesalecost;
+		}
+	};
+
+	//Exception class for non pisitive retailprice
+	class NonPositiveRetailprice
+	{
+	private:
+		int retailprice;
+	public:
+		NonPositiveRetailprice(int r){
+			retailprice = r;
+		}
+		int getValue(){
+			return retailprice;
+		}
+	};
+
 	Book();
 	Book(string isbn, string title, string author, string publisher,time_t dateAdded,
 			int quantity, double wholesaleCost, double retailPrice);
 	
-	void setIsbn(string i) { isbn = i;	}
-	void setTitle(string t) { title = t; }
-	void setAuthor(string a) { author = a; }
-	void setPublisher(string p) { publisher = p; }
-	void setDateAdded(time_t d) { dateAdded = d; }
-	void setQuantityOnHand(int q) { quantityOnHand = q; }
-	void setWholesaleCost(double w) { wholesaleCost = w; }
-	void setRetailPrice(double r) { retailPrice = r; }
-	string getIsbn() { return isbn; }
-	string getTitle() { return title; }
-	string getAuthor() { return author; 	}
-	string getPublisher() {	return publisher; }
-	time_t getDateAdded() { return dateAdded; }
-	int getQuantityOnHand() { return quantityOnHand; }
-	double getWholesaleCost() { return wholesaleCost; }
-	double getRetailPrice() { return retailPrice; }
+	void setIsbn(string i);
+	void setTitle(string t);
+	void setAuthor(string a);
+	void setPublisher(string p);
+	void setDateAdded(time_t d);
+	void setQuantityOnHand(int q);
+	void setWholesaleCost(double w);
+	void setRetailPrice(double r);
+	string getIsbn();
+	string getTitle();
+	string getAuthor();
+	string getPublisher();
+	time_t getDateAdded();
+	int getQuantityOnHand();
+	double getWholesaleCost();
+	double getRetailPrice();
 };
 
 #endif
