@@ -39,7 +39,7 @@ public:
 	//Exception class for empty publisher
 	class EmptyPublisher{};
 
-	//Exception class for non pisitive quantity
+	//Exception class for non positive quantity
 	class NonPositiveQuantity{
 	private: 
 			int quantity;
@@ -52,7 +52,7 @@ public:
 		}
 	};
 
-	//Exception class for non pisitive wholesalecost
+	//Exception class for non positive wholesalecost
 	class NonPositiveWholesalecost
 	{
 	private:
@@ -66,7 +66,7 @@ public:
 		}
 	};
 
-	//Exception class for non pisitive retailprice
+	//Exception class for non positive retailprice
 	class NonPositiveRetailprice
 	{
 	private:
