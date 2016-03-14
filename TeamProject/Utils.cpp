@@ -117,8 +117,46 @@ Book Utils::fromCsv(string line) {
 	string retailPriceStr = "";
 	getline(tokens, retailPriceStr, ',');
 	double retailPrice = stod(retailPriceStr);
-
-	return Book(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+	try
+	{
+		Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+		return  b;
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error parsing file:Empty string given for title." << isbn <<endl;
+		exit(-1);
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error parsing file:Empty string given for author." << isbn << endl;
+		exit(-1);
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error parsing file:Empty string given for publisher."<< isbn <<endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveQuantity q)
+	{
+		cout << "Error parsing file:Non positive value given for quantity. isbn="<< isbn << ", quantity=" << q.getValue() <<endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveWholesalecost w)
+	{
+		cout << "Error parsing file:Non positive value given for wholesalecost. isbn" << isbn <<", wholesaleprice=" <<w.getValue() << endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveRetailprice r)
+	{
+		cout << "Error parsing file:Non positive value given for retailprice.isbn" << isbn <<", retailprice=" << r.getValue() << endl;
+		exit(-1);
+	}
+	catch (string message)
+	{
+		cout << "Error parsing file: " << message << isbn << endl;
+		exit(-1);
+	}
 }
 
 string Utils::toLowerCase(string givenString) {
