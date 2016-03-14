@@ -19,6 +19,7 @@ private:
 	ReportModule();
 
 public:
+	static int listingMode;
 	static ReportModule * getInstance();
 
 	void display();
@@ -29,10 +30,10 @@ public:
 	void displayListingByQuantity();
 	void displayListingByCost();
 	void displayListingByAge();
+	void displayListingConfiguration();
 
-	template<class Type> void printOut(Type value);
-	template<> void printOut(string value);
-	void printBook(Book book);
+	template<class Type> void printOut(Type value, int width);
+	template<> void printOut(string value, int width);
 
 };
 

@@ -13,6 +13,10 @@ using namespace std;
 class Utils {
 
 public:
+	static const int DEFAULT;
+	static const int INCREASING;
+	static const int DECREASING;
+
 	static string toString(time_t const &time);
 	static time_t fromString(string str);
 	
@@ -21,6 +25,13 @@ public:
 
 	static string toLowerCase(string givenString);
 	static void displayBookInformation(Book book);
+
+	static void swap(Book * a, Book * b);
+
+	static void sortByAge(int left, int right, Book book[], int sortMode);
+	static void sortByQuantity(int left, int right, Book book[], int sortMode);
+	static void sortByWholesaleCost(int left, int right, Book book[], int sortMode);
+	static void sortByRetailPrice(int left, int right, Book book[], int sortMode);
 };
 
 #endif // UTILS_H

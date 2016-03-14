@@ -4,13 +4,16 @@
 #include<time.h>
 #include<sstream>
 #include<string>
+
 #include "Book.h"
 #include "BookDAO.h"
 #include "Utils.h"
+#include "ReportModule.h"
 
 using namespace std;
 
 BookDAO * BookDAO::bookDAO;
+int BookDAO::numBooks = 0;
 int BookDAO::numPossibleBooks = 0;
 
 BookDAO::BookDAO() {
@@ -115,6 +118,14 @@ void BookDAO::deleteByIsbn(string isbn)
 	numBooks--;
 }
 
+Book * BookDAO::getBooks() {
+	Book * copied = new Book[1024];
+	for (int i = 0; i < numBooks; i++) {
+		copied[i] = books[i];
+	}
+	return copied;
+}
+
 Book * BookDAO::getBooksByISBN(string keyword) {
 	Book * possibleBooks = new Book[1024];
 	int numberPossibleBooks = 0;
@@ -127,7 +138,7 @@ Book * BookDAO::getBooksByISBN(string keyword) {
 				lowerCaseKeyWord.find(lowerCaseISBN) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
@@ -143,7 +154,7 @@ Book * BookDAO::getBooksByTitle(string keyword) {
 				lowerCaseKeyWord.find(lowerCaseTitle) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
@@ -159,7 +170,7 @@ Book * BookDAO::getBooksByAuthor(string keyword) {
 				lowerCaseKeyWord.find(lowerCaseAuthor) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
@@ -175,12 +186,22 @@ Book * BookDAO::getBooksByPublisher(string keyword) {
 				lowerCaseKeyWord.find(lowerCasePublisher) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
-Book * BookDAO::getBooksByAge(double age) {
-	return NULL;
+Book * BookDAO::getBooksByAge(string age) {
+	Book * possibleBooks = new Book[1024];
+	int numberPossibleBooks = 0;
+	time_t date = Utils::fromString(age);
+
+	for (int i = 0; i < numBooks; i++) {
+		if (difftime(date, books[i].getDateAdded()) == 0)
+			possibleBooks[numberPossibleBooks++] = books[i];
+	}
+	Utils::sortByAge(0, numberPossibleBooks - 1, possibleBooks, ReportModule::listingMode);
+	numPossibleBooks = numberPossibleBooks;
+	return possibleBooks;
 }
 
 Book * BookDAO::getBooksByQuantity(int quantity) {
@@ -191,7 +212,7 @@ Book * BookDAO::getBooksByQuantity(int quantity) {
 		if (books[i].getQuantityOnHand() == quantity)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
@@ -203,7 +224,7 @@ Book * BookDAO::getBooksByWholesaleCost(double wholesaleCost) {
 		if (books[i].getWholesaleCost() == wholesaleCost)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }
 
@@ -215,6 +236,6 @@ Book * BookDAO::getBooksByRetailPrice(double price) {
 		if (books[i].getRetailPrice() == price)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
-	BookDAO::numPossibleBooks = numberPossibleBooks;
+	numPossibleBooks = numberPossibleBooks;
 	return possibleBooks;
 }

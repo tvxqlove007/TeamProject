@@ -109,7 +109,6 @@ void InventoryModule::displayLookUpMenu() {
 			break;
 		case 8:
 			showBooksByRetailPrice();
-			displayLookUpMenu();
 			break;
 		case 9:
 			display();
@@ -153,9 +152,9 @@ void InventoryModule::displayAdd() {
 		cout << "\t\t2. No, I Want To Go Back To Inventory Menu" << endl << endl;
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 2)
 			cout << "\t\t Invalid Option! Please Enter Your Choice Again!!!" << endl << endl;	
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 2);
 
 	if (choice == 1) {
 		BookDAO::getInstance()->insert(isbn, title, author,
@@ -198,19 +197,23 @@ void InventoryModule::showBooksByISBN() {
 	else cout << "\t\t Sorry! Your ISBN Cannot Be Found!" << endl << endl;
 	
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByISBN();
 		break;
 	case 2:
 		displayLookUpMenu();
+		break;
+	case 3:
+
 		break;
 	}
 }
@@ -248,19 +251,23 @@ void InventoryModule::showBooksByTitle() {
 	else cout << "\t\t Sorry! Your Title Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByTitle();
 		break;
 	case 2:
 		displayLookUpMenu();
+		break;
+	case 3:
+		
 		break;
 	}
 }
@@ -298,13 +305,15 @@ void InventoryModule::showBooksByAuthor() {
 	else cout << "\t\t Sorry! Your Author Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
+
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByAuthor();
@@ -349,7 +358,8 @@ void InventoryModule::showBooksByPublisher() {
 	else cout << "\t\t Sorry! Your Publisher Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
@@ -363,11 +373,65 @@ void InventoryModule::showBooksByPublisher() {
 	case 2:
 		displayLookUpMenu();
 		break;
+	case 3:
+
+		break;
 	}
 }
 
 void InventoryModule::showBooksByDate() {
-	
+	system("CLS");
+	cout << "\t\t  Serendipity Booksellers" << endl;
+	cout << "\t\t    Look Up By Date Added" << endl << endl;
+	cout << "\t\t   Enter Date Added: ";
+	string dateAdded = "";
+	cin.ignore();
+	getline(cin, dateAdded);
+
+	Book * possibleBooks = BookDAO::getInstance()->getBooksByAge(dateAdded);
+
+	int choice = 0;
+	if (BookDAO::numPossibleBooks != 0) {
+		for (int i = 0; i < BookDAO::numPossibleBooks; i++) {
+			cout << i + 1 << endl;
+			cout << "ISBN:\t" << possibleBooks[i].getIsbn() << endl;
+			cout << "Title:\t" << possibleBooks[i].getTitle() << endl;
+			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
+		}
+		do {
+			cout << "\t\t Enter Your Choice: ";
+			cin >> choice;
+			if (choice < 1 || choice > BookDAO::numPossibleBooks)
+				cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
+		} while (choice < 1 || choice > BookDAO::numPossibleBooks);
+		system("CLS");
+		cout << "\t\t  Serendipity Booksellers" << endl;
+		cout << "\t\t      Book Information" << endl << endl;
+		Utils::displayBookInformation(possibleBooks[choice - 1]);
+		BookDAO::numPossibleBooks = 0;
+	}
+	else cout << "\t\t Sorry! Your Date Added Cannot Be Found!" << endl << endl;
+
+	cout << "\t\t 1. Look Up Another Book" << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
+	do {
+		cout << "\t\t Enter Your Choice: ";
+		cin >> choice;
+		if (choice < 1 || choice > 3)
+			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
+	} while (choice < 1 || choice > 3);
+	switch (choice) {
+	case 1:
+		showBooksByWholesale();
+		break;
+	case 2:
+		displayLookUpMenu();
+		break;
+	case 3:
+
+		break;
+	}
 }
 
 void InventoryModule::showBooksByQuantity() {
@@ -402,19 +466,23 @@ void InventoryModule::showBooksByQuantity() {
 	else cout << "\t\t Sorry! Your Quantity Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByQuantity();
 		break;
 	case 2:
 		displayLookUpMenu();
+		break;
+	case 3:
+
 		break;
 	}
 }
@@ -451,19 +519,23 @@ void InventoryModule::showBooksByWholesale() {
 	else cout << "\t\t Sorry! Your Wholesale Cost Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByWholesale();
 		break;
 	case 2:
 		displayLookUpMenu();
+		break;
+	case 3: 
+
 		break;
 	}
 }
@@ -500,19 +572,23 @@ void InventoryModule::showBooksByRetailPrice() {
 	else cout << "\t\t Sorry! Your Retail Price Cannot Be Found!" << endl << endl;
 
 	cout << "\t\t 1. Look Up Another Book" << endl;
-	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
+	cout << "\t\t 2. Back To Look Up Menu" << endl;
+	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2)
+		if (choice < 1 || choice > 3)
 			cout << "\t\t Invalid Option! Please Enter Again!" << endl << endl;
-	} while (choice != 1 && choice != 2);
+	} while (choice < 1 || choice > 3);
 	switch (choice) {
 	case 1:
 		showBooksByRetailPrice();
 		break;
 	case 2:
 		displayLookUpMenu();
+		break;
+	case 3:
+
 		break;
 	}
 }

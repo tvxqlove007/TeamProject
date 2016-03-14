@@ -13,6 +13,7 @@
 #include "Utils.h"
 
 ReportModule * ReportModule::reportModule;
+int ReportModule::listingMode = 1;
 
 ReportModule::ReportModule() {
 	setName("Report Module");
@@ -26,24 +27,12 @@ ReportModule * ReportModule::getInstance() {
 	return reportModule;
 }
 
-template<class Type> void ReportModule::printOut(Type value) {
-	cout << left << setw(10) << setfill(' ') << value;
+template<class Type> void ReportModule::printOut(Type value, int width) {
+	cout << left << setw(width) << value;
 }
 
-template<> void ReportModule::printOut(string value) {
-	cout << left << setw(10) << setfill(' ') << value;
-}
-
-void ReportModule::printBook(Book book) {
-	printOut(book.getIsbn());
-	printOut(book.getTitle());
-	printOut(book.getAuthor());
-	printOut(book.getPublisher());
-	printOut(Utils::toString(book.getDateAdded()));
-	printOut(book.getQuantityOnHand());
-	printOut(book.getWholesaleCost());
-	printOut(book.getRetailPrice());
-	cout << endl;
+template<> void ReportModule::printOut(string value, int width) {
+	cout << left << setw(width) << value;
 }
 
 void ReportModule::display() {
@@ -56,15 +45,16 @@ void ReportModule::display() {
 	cout << "\t\t 4. Inventory by Quantity" << endl;
 	cout << "\t\t 5. Inventory by Cost" << endl;
 	cout << "\t\t 6. Inventory by Age" << endl;
-	cout << "\t\t 7. Return to Main Menu" << endl << endl;
+	cout << "\t\t 7. Listing Configuration" << endl;
+	cout << "\t\t 8. Return to Main Menu" << endl << endl;
 
 	int choice = 0;
 	do {
 		cout << "\t\t Enter Your Choice: ";
 		cin >> choice;
-		if (choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5 && choice != 6 && choice != 7)
+		if (choice < 1 || choice > 8)
 			cout << "\t\t Invalid Command. Please Enter Your Choice Again!!!" << endl << endl;
-	} while (choice != 1 && choice != 2 && choice != 3 && choice != 4 && choice != 5 && choice != 6 && choice != 7);
+	} while (choice < 1 || choice > 8);
 
 	switch (choice) {
 	case 1:
@@ -86,42 +76,134 @@ void ReportModule::display() {
 		displayListingByAge();
 		break;
 	case 7:
+		displayListingConfiguration();
+		break;
+	case 8:
 		Module::showMainMenu();
+		break;
 	}
 }
 
 void ReportModule::displayInventoryListing() {
-	system("CLS");
-	Book * books = BookDAO::getInstance()->getBooks();
-	printOut("ISBN");
-	printOut("Title");
-	printOut("Author");
-	printOut("Publisher");
-	printOut("Date Added");
-	printOut("Quantity On Hand");
-	printOut("Wholesale Cost");
-	printOut("Retail Price");
-	cout << endl;
-	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++)
-		printBook(books[i]);
+	display();
 }
 
 void ReportModule::displayInventoryWholesaleValue() {
+	system("CLS");
+	Book * books = BookDAO::getInstance()->getBooks();
 
+	Utils::sortByWholesaleCost(0, BookDAO::numBooks - 1, books, ReportModule::listingMode);
+
+	cout << "   ";
+	printOut("ISBN", 20);
+	printOut("Title", 22);
+	printOut("Wholesale Cost", 20);
+	cout << "\n------------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++) {
+		printOut(books[i].getIsbn(), 20);
+		printOut(books[i].getTitle(), 27);
+		printOut(books[i].getWholesaleCost(), 20);
+		cout << endl;
+	}
+	system("pause");
+	display();
 }
 
 void ReportModule::displayInventoryRetailValue() {
+	system("CLS");
+	Book * books = BookDAO::getInstance()->getBooks();
 
+	Utils::sortByRetailPrice(0, BookDAO::numBooks - 1, books, ReportModule::listingMode);
+
+	cout << "   ";
+	printOut("ISBN", 20);
+	printOut("Title", 22);
+	printOut("Retail Price", 20);
+	cout << "\n------------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++) {
+		printOut(books[i].getIsbn(), 20);
+		printOut(books[i].getTitle(), 27);
+		printOut(books[i].getRetailPrice(), 20);
+		cout << endl;
+	}
+	system("pause");
+	display();
 }
 
 void ReportModule::displayListingByQuantity() {
+	system("CLS");
+	Book * books = BookDAO::getInstance()->getBooks();
 
+	Utils::sortByQuantity(0, BookDAO::numBooks - 1, books, ReportModule::listingMode);
+
+	cout << "   ";
+	printOut("ISBN", 20);
+	printOut("Title", 22);
+	printOut("Quantity", 20);
+	cout << "\n------------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++) {
+		printOut(books[i].getIsbn(), 20);
+		printOut(books[i].getTitle(), 27);
+		printOut(books[i].getQuantityOnHand(), 20);
+		cout << endl;
+	}
+	system("pause");
+	display();
 }
 
 void ReportModule::displayListingByCost() {
-
+	display();
 }
 
 void ReportModule::displayListingByAge() {
+	system("CLS");
+	Book * books = BookDAO::getInstance()->getBooks();
 
+	Utils::sortByAge(0, BookDAO::numBooks - 1, books, ReportModule::listingMode);
+
+	cout << "   ";
+	printOut("ISBN", 20);
+	printOut("Title", 27);
+	printOut("Date Added", 20);
+	cout << "\n------------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++) {
+		printOut(books[i].getIsbn(), 20);
+		printOut(books[i].getTitle(), 27);
+		printOut(Utils::toString(books[i].getDateAdded()), 20);
+		cout << endl;
+	}
+	system("pause");
+	display();
+}
+
+void ReportModule::displayListingConfiguration() {
+	system("CLS");
+	cout << "\t\t  Serendipity Booksellers" << endl;
+	cout << "\t\t\t Reports" << endl;
+	cout << "\t\t Listing Configuration" << endl << endl;
+	cout << "\t1. Listing In Database Order (By Default)"<< endl;
+	cout << "\t2. Listing In Increasing Order" << endl;
+	cout << "\t3. Listing In Decreasing Order" << endl;
+
+	int choice = 0;
+	do {
+		cout << "\t\t Enter Your Choice: ";
+		cin >> choice;
+		if (choice < 1 || choice > 3)
+			cout << "\t\t Invalid Command. Please Enter Your Choice Again!!!" << endl << endl;
+	} while (choice < 1 || choice > 3);
+
+	switch (choice) {
+	case 1:
+		listingMode = 1;
+		break;
+	case 2:
+		listingMode = 2;
+		break;
+	case 3:
+		listingMode = 3;
+		break;
+	}
+	system("pause");
+	display();
 }

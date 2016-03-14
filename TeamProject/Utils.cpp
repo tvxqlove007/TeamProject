@@ -8,6 +8,10 @@
 
 using namespace std;
 
+const int Utils::DEFAULT = 1;
+const int Utils::INCREASING = 2;
+const int Utils::DECREASING = 3;
+
 // Converts time_t into string of format YY-MM-DD HH:MM:SS
 string Utils::toString(time_t const &time) {
 	tm * timeinfo = localtime(&time);
@@ -86,38 +90,30 @@ string Utils::toCsv(Book &b) {
 Book Utils::fromCsv(string line) {
 	istringstream tokens(line);
 
-	// isbn
 	string isbn = "";
 	getline(tokens, isbn, ',');
 
-	// title
 	string title = "";
 	getline(tokens, title, ',');
 
-	// author
 	string author = "";
 	getline(tokens, author, ',');
 
-	// publisher
 	string publisher = "";
 	getline(tokens, publisher, ',');
 
-	// dateAdded
 	string dateStr = "";
 	getline(tokens, dateStr, ',');
 	time_t dateAdded = fromString(dateStr);
 
-	// quantityOnHand
 	string quantityOnHandStr = "";
 	getline(tokens, quantityOnHandStr, ',');
 	int quantityOnHand = stoi(quantityOnHandStr);
 
-	// wholesaleCost
 	string wholesaleCostStr = "";
 	getline(tokens, wholesaleCostStr, ',');
 	double wholesaleCost = stod(wholesaleCostStr);
 
-	// retailPrice
 	string retailPriceStr = "";
 	getline(tokens, retailPriceStr, ',');
 	double retailPrice = stod(retailPriceStr);
@@ -141,6 +137,136 @@ void Utils::displayBookInformation(Book book) {
 	cout << "\tQuantity-On-Hand\t" << book.getQuantityOnHand() << endl;
 	cout << "\tWholesale Cost  \t" << book.getWholesaleCost() << endl;
 	cout << "\tRetail Price    \t" << book.getRetailPrice() << endl << endl;
+}
+
+void Utils::swap(Book  * a, Book * b) {
+	Book c = *a;
+	*a = *b;
+	*b = c;
+}
+
+void Utils::sortByAge(int left, int right, Book book[], int sortMode) {
+	if (sortMode != DEFAULT && left <= right) {
+		int x = left;
+		int y = right;
+		int median = x + (y - x) / 2;
+		do {
+
+			if (sortMode == INCREASING) {
+				while (difftime(book[x].getDateAdded(), book[median].getDateAdded()) < 0)
+					x++;
+				while (difftime(book[y].getDateAdded(), book[median].getDateAdded()) > 0)
+					y--;
+			}
+
+			if (sortMode == DECREASING) {
+				while (difftime(book[x].getDateAdded(), book[median].getDateAdded()) > 0)
+					x++;
+				while (difftime(book[y].getDateAdded(), book[median].getDateAdded()) < 0)
+					y--;
+			}
+			
+			if (x <= y) {
+				if (x < y) swap(&book[x], &book[y]);
+				x++; y--;
+			}
+		} while (x <= y);
+		sortByAge(left, y, book, sortMode);
+		sortByAge(x, right, book, sortMode);
+	}
+}
+
+void Utils::sortByQuantity(int left, int right, Book book[], int sortMode) {
+	if (sortMode != DEFAULT && left <= right) {
+		int x = left;
+		int y = right;
+		int median = x + (y - x) / 2;
+		do {
+			
+			if (sortMode == INCREASING) {
+				while (book[x].getQuantityOnHand() < book[median].getQuantityOnHand())
+					x++;
+				while (book[y].getQuantityOnHand() > book[median].getQuantityOnHand())
+					y--;
+			}
+
+			if (sortMode == DECREASING) {
+				while (book[x].getQuantityOnHand() > book[median].getQuantityOnHand())
+					x++;
+				while (book[y].getQuantityOnHand() < book[median].getQuantityOnHand())
+					y--;
+			}
+			
+			if (x <= y) {
+				if (x < y) swap(&book[x], &book[y]);
+				x++; y--;
+			}
+		} while (x <= y);
+		sortByQuantity(left, y, book, sortMode);
+		sortByQuantity(x, right, book, sortMode);
+	}
+}
+
+void Utils::sortByWholesaleCost(int left, int right, Book book[], int sortMode) {
+	if (sortMode != DEFAULT && left <= right) {
+		int x = left;
+		int y = right;
+		int median = x + (y - x) / 2;
+		do {
+
+			if (sortMode == INCREASING) {
+				while (book[x].getWholesaleCost() < book[median].getWholesaleCost())
+					x++;
+				while (book[y].getWholesaleCost() > book[median].getWholesaleCost())
+					y--;
+			}
+
+			if (sortMode == DECREASING) {
+				while (book[x].getWholesaleCost() > book[median].getWholesaleCost())
+					x++;
+				while (book[y].getWholesaleCost() < book[median].getWholesaleCost())
+					y--;
+			}
+			
+			if (x <= y) {
+				if (x < y) swap(&book[x], &book[y]);
+				x++; y--;
+			}
+		} while (x <= y);
+		sortByWholesaleCost(left, y, book, sortMode);
+		sortByWholesaleCost(x, right, book, sortMode);
+	}
+}
+
+void Utils::sortByRetailPrice(int left, int right, Book book[], int sortMode) {
+	if (sortMode != DEFAULT && left <= right) {
+		int x = left;
+		int y = right;
+		int median = x + (y - x) / 2;
+		do {
+
+			if (sortMode == INCREASING) {
+				while (book[x].getRetailPrice() < book[median].getRetailPrice())
+					x++;
+				while (book[y].getRetailPrice() > book[median].getRetailPrice())
+					y--;
+			}
+
+			if (sortMode == DECREASING) {
+				while (book[x].getRetailPrice() > book[median].getRetailPrice())
+					x++;
+				while (book[y].getRetailPrice() < book[median].getRetailPrice())
+					y--;
+			}
+			
+			if (x <= y) {
+				if (x < y) swap(&book[x], &book[y]);
+				x++; y--;
+			}
+		} while (x <= y);
+		sortByRetailPrice(left, y, book, sortMode);
+		sortByRetailPrice(x, right, book, sortMode);
+	}
 }
 
 

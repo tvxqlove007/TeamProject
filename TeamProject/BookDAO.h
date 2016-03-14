@@ -14,12 +14,13 @@ using namespace std;
 class BookDAO {
 private:
 	Book books[1024];
-	int numBooks = 0;
+	static BookDAO * bookDAO;
 
 	void storeToFile();
-	static BookDAO * bookDAO;
+
 public:
 	static int numPossibleBooks;
+	static int numBooks;
 
 	BookDAO();
 	void close();
@@ -35,12 +36,12 @@ public:
 
 	//READ
 	bool existsByIsbn(string isbn);
-	Book * getBooks() { return books; };
+	Book * getBooks();
 	Book * getBooksByISBN(string keyword);
 	Book * getBooksByTitle(string keyword);
 	Book * getBooksByAuthor(string keyword);
 	Book * getBooksByPublisher(string keyword);
-	Book * getBooksByAge(double age);	///
+	Book * getBooksByAge(string age);	///
 	Book * getBooksByQuantity(int quantity);
 	Book * getBooksByWholesaleCost(double wholesaleCost);
 	Book * getBooksByRetailPrice(double price);
