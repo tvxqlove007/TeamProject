@@ -57,17 +57,49 @@ bool BookDAO::existsByIsbn(string isbn) {
 
 void BookDAO::insert(string isbn, string title, string author, string publisher,
 	int quantityOnHand, double wholesaleCost, double retailPrice) {
-	//  Validated  that no book exists by this isbn number.
+	//  Validate that no book exists by this isbn number.
 	if (existsByIsbn(isbn)) {
 		cout << "\t\t Book already exist!" << endl;
 		return;
 	}
 
 	time_t  dateAdded = time(NULL);
-	Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
-	books[numBooks] = b;
-	numBooks++;
-	cout << "\t\t Your Book Has Been Inserted Successfully!" << endl;
+	try
+	{
+		Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+		books[numBooks] = b;
+		numBooks++;
+		storeToFile();
+		cout << "\t\t Your Book Has Been Inserted Successfully!" << endl;
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error:Empty string given for title.\n";
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error:Empty string given for author.\n";
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error:Empty string given for publisher.\n";
+	}
+	catch (Book::NonPositiveQuantity)
+	{
+		cout << "Error:non positive value given for quantity.\n";
+	}
+	catch (Book::NonPositiveWholesalecost)
+	{
+		cout << "Error:non positive value given for wholesalecost.\n";
+	}
+	catch (Book::NonPositiveRetailprice)
+	{
+		cout << "Error:non positive value given for retailprice.\n";
+	}
+	catch (string message)
+	{
+		cout << "Error: " << message << endl;
+	}
 }
 
 void BookDAO::update(string isbn, string title, string author, string publisher,
@@ -88,12 +120,43 @@ void BookDAO::update(string isbn, string title, string author, string publisher,
 		cout << "Book doesn't exist" << endl;
 		return;
 	}
-	b->setTitle(title);
-	b->setAuthor(author);
-	b->setPublisher(publisher);
-	b->setQuantityOnHand(quantityOnHand);
-	b->setRetailPrice(retailPrice);
-	b->setWholesaleCost(wholesaleCost);
+	try{
+		b->setTitle(title);
+		b->setAuthor(author);
+		b->setPublisher(publisher);
+		b->setQuantityOnHand(quantityOnHand);
+		b->setRetailPrice(retailPrice);
+		b->setWholesaleCost(wholesaleCost);
+		storeToFile();
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error:Empty string given for title.\n";
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error:Empty string given for author.\n";
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error:Empty string given for publisher.\n";
+	}
+	catch (Book::NonPositiveQuantity)
+	{
+		cout << "Error:non positive value given for quantity.\n";
+	}
+	catch (Book::NonPositiveWholesalecost)
+	{
+		cout << "Error:non positive value given for wholesalecost.\n";
+	}
+	catch (Book::NonPositiveRetailprice)
+	{
+		cout << "Error:non positive value given for retailprice.\n";
+	}
+	catch (string message)
+	{
+		cout << "Error: " << message << endl;
+	}
 }
 
 void BookDAO::deleteByIsbn(string isbn)
@@ -116,6 +179,7 @@ void BookDAO::deleteByIsbn(string isbn)
 		books[j - 1] = books[j];
 	}
 	numBooks--;
+	storeToFile();
 }
 
 Book * BookDAO::getBooks() {
