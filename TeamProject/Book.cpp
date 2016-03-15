@@ -15,7 +15,8 @@ Book::Book(string isbn, string title, string author, string publisher,
 	setWholesaleCost(wholesaleCost);
 	setRetailPrice(retailPrice);
 }
-
+/**
+ gfhghgjhg*/
 void Book::setIsbn(string i) {
 	isbn = i;
 }
