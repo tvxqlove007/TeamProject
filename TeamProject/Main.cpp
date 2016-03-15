@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "Module.h"
+#include "BookDAO.h"
 
 using namespace std;
 
