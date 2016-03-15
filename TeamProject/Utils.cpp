@@ -14,6 +14,36 @@ const int Utils::DEFAULT = 1;
 const int Utils::INCREASING = 2;
 const int Utils::DECREASING = 3;
 
+int Utils::showChoices(int lowerBound, int upperBound) {
+	int choice = 0;
+	do {
+		cout << "\t\t Enter Your Choice: ";
+		cin >> choice;
+		if (choice < lowerBound || choice > upperBound)
+			cout << "\t\t Invalid Option. Please Enter Your Choice Again!!!" << endl << endl;
+	} while (choice < lowerBound || choice > upperBound);
+	return choice;
+}
+
+string Utils::convertBookToString(int itemNumber, string isbn, string title, 
+								string author, string publisher, time_t dateAdded, 
+							int quantity, double retailPrice) {
+	string bookString = "";
+	bookString += to_string(itemNumber) + "\n";
+	bookString += "\t ISBN:              " + isbn + "\n";
+	bookString += "\t Title:             " + title + "\n";
+	bookString += "\t Author:            " + author + "\n";
+	bookString += "\t Publisher:         " + publisher + "\n";
+	bookString += "\t Date Added:        " + toString(dateAdded) + "\n";
+	bookString += "\t Quantity:          " + to_string(quantity) + "\n";
+	
+	ostringstream stream;
+	stream << fixed << setprecision(2) << retailPrice;
+	bookString += "\t Retail Price:      " + stream.str() + "\n";
+
+	return bookString;
+}
+
 // Converts time_t into string of format YY-MM-DD HH:MM:SS
 string Utils::toString(time_t const &time) {
 	tm * timeinfo = localtime(&time);

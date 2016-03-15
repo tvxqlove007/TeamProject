@@ -8,6 +8,7 @@
 
 #include "Module.h"
 #include "InventoryModule.h"
+#include "CashierModule.h"
 #include "Book.h"
 #include "BookDAO.h"
 #include "Utils.h"
@@ -45,17 +46,6 @@ string InventoryModule::askForISBN() {
 	return isbn;
 }
 
-int InventoryModule::showChoices(int lowerBound, int upperBound) {
-	int choice = 0;
-	do {
-		cout << "\t\t Enter Your Choice: ";
-		cin >> choice;
-		if (choice < lowerBound || choice > upperBound)
-			cout << "\t\t Invalid Option. Please Enter Your Choice Again!!!" << endl << endl;
-	} while (choice < lowerBound || choice > upperBound);
-	return choice;
-}
-
 void InventoryModule::display() {
 	system("CLS");
 	cout << "\t\t  Serendipity Booksellers" << endl;
@@ -66,7 +56,7 @@ void InventoryModule::display() {
 	cout << "\t\t 4. Delete a Book" << endl;
 	cout << "\t\t 5. Return to the Main Menu" << endl << endl;
 
-	switch (showChoices(1,5)) {
+	switch (Utils::showChoices(1,5)) {
 	case 1:
 		displayLookUpMenu();
 		break;
@@ -99,7 +89,7 @@ void InventoryModule::displayLookUpMenu() {
 	cout << "\t\t 8. Look Up By Retail Price" << endl;
 	cout << "\t\t 9. Return to the Inventory Module" << endl << endl;
 
-	switch (showChoices(1, 9)) {
+	switch (Utils::showChoices(1, 9)) {
 	case 1:
 		showBooksByISBN();
 		break;
@@ -127,12 +117,12 @@ void InventoryModule::displayLookUpMenu() {
 	}
 }
 
-void InventoryModule::displayOptionsAfterLookUp(int thingToShow, Book bookObtained) {
+void InventoryModule::displayOptionsAfterLookUp(int thingToShow, Book &bookObtained) {
 	cout << "\t\t 1. Look Up Another Book" << endl;
 	cout << "\t\t 2. Back To Look Up Menu" << endl;
 	cout << "\t\t 3. Add This Book To Cart" << endl << endl;
 
-	switch (showChoices(1, 3)) {
+	switch (Utils::showChoices(1, 3)) {
 	case 1:
 
 		switch (thingToShow) {
@@ -169,16 +159,36 @@ void InventoryModule::displayOptionsAfterLookUp(int thingToShow, Book bookObtain
 	case 3:
 		int howMany = -1;
 		do {
+			cout << "How Many Books Do You Want? ";
 			cin >> howMany;
 			if (howMany < 0)
 				cout << "Number Of Books Has To Be An Integer Greater Than 0. Please Enter Again" << endl << endl;
 			if (howMany > bookObtained.getQuantityOnHand())
 				cout << "We Only Have " << bookObtained.getQuantityOnHand() << " In Stock. Please Enter Again" << endl << endl;
 		} while (howMany < 0 || howMany > bookObtained.getQuantityOnHand());
-		cout << "How Many Books Do You Want? ";
-		
-
 	
+		if (howMany == bookObtained.getQuantityOnHand())
+			BookDAO::getInstance()->deleteByIsbn(bookObtained.getIsbn());
+		else BookDAO::getInstance()->update(bookObtained.getIsbn(),
+											bookObtained.getTitle(),
+											bookObtained.getAuthor(),
+											bookObtained.getPublisher(),
+											bookObtained.getQuantityOnHand() - howMany,
+											bookObtained.getWholesaleCost(),
+											bookObtained.getRetailPrice());
+
+		CashierModule::purchaseBooks[CashierModule::numberItems++] = Utils::convertBookToString(
+																	CashierModule::numberItems,
+																	bookObtained.getIsbn(),
+																	bookObtained.getTitle(),
+																	bookObtained.getAuthor(),
+																	bookObtained.getPublisher(),
+																	bookObtained.getDateAdded(),
+																	howMany,
+																	bookObtained.getRetailPrice());
+		bookObtained.setQuantityOnHand(bookObtained.getQuantityOnHand() - howMany);
+		cout << "Your Purchase Has Been Recorded In Receipt. Access Cashier Module To Review!";
+		system("pause");
 		break;
 
 	}
@@ -213,7 +223,7 @@ void InventoryModule::displayAdd() {
 	cout << "\t\t 1. Yes, I Want To Add This Book" << endl;
 	cout << "\t\t 2. No, I Want To Go Back To Inventory Menu" << endl << endl;
 
-	if (showChoices(1,2) == 1) {
+	if (Utils::showChoices(1,2) == 1) {
 		BookDAO::getInstance()->insert(isbn, title, author,
 			publisher, quantity, wholesaleCost, retailPrice);
 		system("pause");
@@ -241,7 +251,7 @@ void InventoryModule::displayEdit() {
 	cout << "\t\t 1. Edit Another Book" << endl;
 	cout << "\t\t 2. Back To Look Up Menu" << endl << endl;
 
-	if (showChoices(1, 2) == 1)
+	if (Utils::showChoices(1, 2) == 1)
 		displayEdit();
 }
 
@@ -268,7 +278,7 @@ bool InventoryModule::displayEditOptions(string isbn) {
 	cout << "\t\t 1. Yes, I Want To Edit This Book" << endl;
 	cout << "\t\t 2. No, I Want To Go Back To Inventory Menu" << endl << endl;
 
-	if (showChoices(1,2) == 1) {
+	if (Utils::showChoices(1,2) == 1) {
 		BookDAO::getInstance()->update(isbn, title, author,
 			publisher, quantity, wholesaleCost, retailPrice);
 		return true;
@@ -305,7 +315,7 @@ void InventoryModule::showBooksByISBN() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl << endl;
 		}
 	
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -337,7 +347,7 @@ void InventoryModule::showBooksByTitle() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl << endl;
 		}
 	
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -369,7 +379,7 @@ void InventoryModule::showBooksByAuthor() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
 		}
 	
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -402,7 +412,7 @@ void InventoryModule::showBooksByPublisher() {
 			cout << "Publisher:\t" << possibleBooks[i].getPublisher() << endl;
 		}
 		
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -435,7 +445,7 @@ void InventoryModule::showBooksByDate() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
 		}
 	
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -466,7 +476,7 @@ void InventoryModule::showBooksByQuantity() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
 		}
 		
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -497,7 +507,7 @@ void InventoryModule::showBooksByWholesale() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
 		}
 	
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;
@@ -528,7 +538,7 @@ void InventoryModule::showBooksByRetailPrice() {
 			cout << "Author:\t" << possibleBooks[i].getAuthor() << endl;
 		}
 		
-		int choice = showChoices(1, BookDAO::numPossibleBooks) - 1;
+		int choice = Utils::showChoices(1, BookDAO::numPossibleBooks) - 1;
 		system("CLS");
 		cout << "\t\t  Serendipity Booksellers" << endl;
 		cout << "\t\t      Book Information" << endl << endl;

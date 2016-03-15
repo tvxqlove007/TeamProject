@@ -9,6 +9,7 @@
 #include "CashierModule.h"
 #include "InventoryModule.h"
 #include "ReportModule.h"
+#include "Utils.h"
 
 string Module::getName() {
 	return name;
@@ -35,23 +36,18 @@ void Module::showMainMenu() {
 	cout << "\t\t 3. Report Module" << endl;
 	cout << "\t\t 4. Exit" << endl << endl;
 
-	int choice = 0;
-	do {
-		cout << "\t\t Enter Your Choice: ";
-		cin >> choice;
-		if (choice != 1 && choice != 2 && choice != 3 && choice != 4)
-			cout << "\t\t Invalid Command. Please Enter Your Choice Again!!!" << endl << endl;
-	} while (choice != 1 && choice != 2 && choice != 3 && choice != 4);
-
-	switch (choice) {
+	switch (Utils::showChoices(1,4)) {
 	case 1:
 		CashierModule::getInstance()->display();
+		showMainMenu();
 		break;
 	case 2:
 		InventoryModule::getInstance()->display();
+		showMainMenu();
 		break;
 	case 3:
 		ReportModule::getInstance()->display();
+		showMainMenu();
 	case 4:
 		cout << "Thank You For Using Serendipity Booksellers!" << endl << endl;
 	}
