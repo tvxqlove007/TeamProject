@@ -2,7 +2,9 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-#include<time.h>
+#include <time.h>
+#include <iomanip>
+
 #include "Book.h"
 #include "Utils.h"
 
@@ -77,13 +79,17 @@ time_t Utils::fromString(string str) {
 string Utils::toCsv(Book &b) {
 	time_t dateAdded = b.getDateAdded();
 	string dateStr = Utils::toString(dateAdded);
-	return b.getIsbn() + "," +
-		b.getTitle() + "," +
-		b.getAuthor() + "," +
-		b.getPublisher() + "," +
-		dateStr + "," +
-		to_string(b.getQuantityOnHand()) + "," +
-		to_string(b.getWholesaleCost()) + "," + to_string(b.getRetailPrice());
+	string csv = b.getIsbn() + "," + b.getTitle() + "," + b.getAuthor() + ","
+				+ b.getPublisher() + "," + dateStr + "," + to_string(b.getQuantityOnHand()) + ",";
+	
+	ostringstream stream1, stream2;
+	stream1 << fixed << setprecision(2) << b.getWholesaleCost();
+	csv += stream1.str() + ",";
+
+	stream2 << fixed << setprecision(2) << b.getRetailPrice();
+	csv += stream2.str();
+	
+	return csv;
 }
 
 // Parse csv (comma separated value) entry into Book object
@@ -117,8 +123,46 @@ Book Utils::fromCsv(string line) {
 	string retailPriceStr = "";
 	getline(tokens, retailPriceStr, ',');
 	double retailPrice = stod(retailPriceStr);
-
-	return Book(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+	try
+	{
+		Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+		return  b;
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error parsing file:Empty string given for title." << isbn << endl;
+		exit(-1);
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error parsing file:Empty string given for author." << isbn << endl;
+		exit(-1);
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error parsing file:Empty string given for publisher." << isbn << endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveQuantity q)
+	{
+		cout << "Error parsing file:Non positive value given for quantity. isbn=" << isbn << ", quantity=" << q.getValue() << endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveWholesalecost w)
+	{
+		cout << "Error parsing file:Non positive value given for wholesalecost. isbn" << isbn << ", wholesaleprice=" << w.getValue() << endl;
+		exit(-1);
+	}
+	catch (Book::NonPositiveRetailprice r)
+	{
+		cout << "Error parsing file:Non positive value given for retailprice.isbn" << isbn << ", retailprice=" << r.getValue() << endl;
+		exit(-1);
+	}
+	catch (string message)
+	{
+		cout << "Error parsing file: " << message << isbn << endl;
+		exit(-1);
+	}
 }
 
 string Utils::toLowerCase(string givenString) {
@@ -135,8 +179,8 @@ void Utils::displayBookInformation(Book book) {
 	cout << "\tPublisher       \t" << book.getPublisher() << endl;
 	cout << "\tDate Added      \t" << toString(book.getDateAdded()) << endl;
 	cout << "\tQuantity-On-Hand\t" << book.getQuantityOnHand() << endl;
-	cout << "\tWholesale Cost  \t" << book.getWholesaleCost() << endl;
-	cout << "\tRetail Price    \t" << book.getRetailPrice() << endl << endl;
+	cout << "\tWholesale Cost  \t" << setprecision(2) << book.getWholesaleCost() << endl;
+	cout << "\tRetail Price    \t" << setprecision(2) << book.getRetailPrice() << endl << endl;
 }
 
 void Utils::swap(Book  * a, Book * b) {
@@ -165,7 +209,7 @@ void Utils::sortByAge(int left, int right, Book book[], int sortMode) {
 				while (difftime(book[y].getDateAdded(), book[median].getDateAdded()) < 0)
 					y--;
 			}
-			
+
 			if (x <= y) {
 				if (x < y) swap(&book[x], &book[y]);
 				x++; y--;
@@ -182,7 +226,7 @@ void Utils::sortByQuantity(int left, int right, Book book[], int sortMode) {
 		int y = right;
 		int median = x + (y - x) / 2;
 		do {
-			
+
 			if (sortMode == INCREASING) {
 				while (book[x].getQuantityOnHand() < book[median].getQuantityOnHand())
 					x++;
@@ -196,7 +240,7 @@ void Utils::sortByQuantity(int left, int right, Book book[], int sortMode) {
 				while (book[y].getQuantityOnHand() < book[median].getQuantityOnHand())
 					y--;
 			}
-			
+
 			if (x <= y) {
 				if (x < y) swap(&book[x], &book[y]);
 				x++; y--;
@@ -227,7 +271,7 @@ void Utils::sortByWholesaleCost(int left, int right, Book book[], int sortMode) 
 				while (book[y].getWholesaleCost() < book[median].getWholesaleCost())
 					y--;
 			}
-			
+
 			if (x <= y) {
 				if (x < y) swap(&book[x], &book[y]);
 				x++; y--;
@@ -258,7 +302,7 @@ void Utils::sortByRetailPrice(int left, int right, Book book[], int sortMode) {
 				while (book[y].getRetailPrice() < book[median].getRetailPrice())
 					y--;
 			}
-			
+
 			if (x <= y) {
 				if (x < y) swap(&book[x], &book[y]);
 				x++; y--;
@@ -268,6 +312,4 @@ void Utils::sortByRetailPrice(int left, int right, Book book[], int sortMode) {
 		sortByRetailPrice(x, right, book, sortMode);
 	}
 }
-
-
 

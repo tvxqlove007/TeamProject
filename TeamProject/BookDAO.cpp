@@ -26,7 +26,7 @@ BookDAO::BookDAO() {
 	}
 	inputFile.close();
 }
- 
+
 BookDAO * BookDAO::getInstance() {
 	if (bookDAO == NULL) {
 		bookDAO = new BookDAO();
@@ -57,17 +57,49 @@ bool BookDAO::existsByIsbn(string isbn) {
 
 void BookDAO::insert(string isbn, string title, string author, string publisher,
 	int quantityOnHand, double wholesaleCost, double retailPrice) {
-	//  Validated  that no book exists by this isbn number.
+	//  Validate that no book exists by this isbn number.
 	if (existsByIsbn(isbn)) {
 		cout << "\t\t Book already exist!" << endl;
 		return;
 	}
 
 	time_t  dateAdded = time(NULL);
-	Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
-	books[numBooks] = b;
-	numBooks++;
-	cout << "\t\t Your Book Has Been Inserted Successfully!" << endl;
+	try
+	{
+		Book b(isbn, title, author, publisher, dateAdded, quantityOnHand, wholesaleCost, retailPrice);
+		books[numBooks] = b;
+		numBooks++;
+		storeToFile();
+		cout << "\t\t Your Book Has Been Inserted Successfully!" << endl;
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error:Empty string given for title.\n";
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error:Empty string given for author.\n";
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error:Empty string given for publisher.\n";
+	}
+	catch (Book::NonPositiveQuantity)
+	{
+		cout << "Error:non positive value given for quantity.\n";
+	}
+	catch (Book::NonPositiveWholesalecost)
+	{
+		cout << "Error:non positive value given for wholesalecost.\n";
+	}
+	catch (Book::NonPositiveRetailprice)
+	{
+		cout << "Error:non positive value given for retailprice.\n";
+	}
+	catch (string message)
+	{
+		cout << "Error: " << message << endl;
+	}
 }
 
 void BookDAO::update(string isbn, string title, string author, string publisher,
@@ -88,12 +120,43 @@ void BookDAO::update(string isbn, string title, string author, string publisher,
 		cout << "Book doesn't exist" << endl;
 		return;
 	}
-	b->setTitle(title);
-	b->setAuthor(author);
-	b->setPublisher(publisher);
-	b->setQuantityOnHand(quantityOnHand);
-	b->setRetailPrice(retailPrice);
-	b->setWholesaleCost(wholesaleCost);
+	try {
+		b->setTitle(title);
+		b->setAuthor(author);
+		b->setPublisher(publisher);
+		b->setQuantityOnHand(quantityOnHand);
+		b->setRetailPrice(retailPrice);
+		b->setWholesaleCost(wholesaleCost);
+		storeToFile();
+	}
+	catch (Book::EmptyTitle)
+	{
+		cout << "Error:Empty string given for title.\n";
+	}
+	catch (Book::EmptyAuthor)
+	{
+		cout << "Error:Empty string given for author.\n";
+	}
+	catch (Book::EmptyPublisher)
+	{
+		cout << "Error:Empty string given for publisher.\n";
+	}
+	catch (Book::NonPositiveQuantity)
+	{
+		cout << "Error:non positive value given for quantity.\n";
+	}
+	catch (Book::NonPositiveWholesalecost)
+	{
+		cout << "Error:non positive value given for wholesalecost.\n";
+	}
+	catch (Book::NonPositiveRetailprice)
+	{
+		cout << "Error:non positive value given for retailprice.\n";
+	}
+	catch (string message)
+	{
+		cout << "Error: " << message << endl;
+	}
 }
 
 void BookDAO::deleteByIsbn(string isbn)
@@ -116,6 +179,8 @@ void BookDAO::deleteByIsbn(string isbn)
 		books[j - 1] = books[j];
 	}
 	numBooks--;
+	cout << "\nBook Has Been Deleted Successfully!" << endl;
+	storeToFile();
 }
 
 Book * BookDAO::getBooks() {
@@ -135,7 +200,7 @@ Book * BookDAO::getBooksByISBN(string keyword) {
 	for (int i = 0; i < numBooks; i++) {
 		lowerCaseISBN = Utils::toLowerCase(books[i].getIsbn());
 		if (lowerCaseISBN.find(lowerCaseKeyWord) != std::string::npos ||
-				lowerCaseKeyWord.find(lowerCaseISBN) != std::string::npos)
+			lowerCaseKeyWord.find(lowerCaseISBN) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
 	numPossibleBooks = numberPossibleBooks;
@@ -151,7 +216,7 @@ Book * BookDAO::getBooksByTitle(string keyword) {
 	for (int i = 0; i < numBooks; i++) {
 		lowerCaseTitle = Utils::toLowerCase(books[i].getTitle());
 		if (lowerCaseTitle.find(lowerCaseKeyWord) != std::string::npos ||
-				lowerCaseKeyWord.find(lowerCaseTitle) != std::string::npos)
+			lowerCaseKeyWord.find(lowerCaseTitle) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
 	numPossibleBooks = numberPossibleBooks;
@@ -167,7 +232,7 @@ Book * BookDAO::getBooksByAuthor(string keyword) {
 	for (int i = 0; i < numBooks; i++) {
 		lowerCaseAuthor = Utils::toLowerCase(books[i].getAuthor());
 		if (lowerCaseAuthor.find(lowerCaseKeyWord) != std::string::npos ||
-				lowerCaseKeyWord.find(lowerCaseAuthor) != std::string::npos)
+			lowerCaseKeyWord.find(lowerCaseAuthor) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
 	numPossibleBooks = numberPossibleBooks;
@@ -183,7 +248,7 @@ Book * BookDAO::getBooksByPublisher(string keyword) {
 	for (int i = 0; i < numBooks; i++) {
 		lowerCasePublisher = Utils::toLowerCase(books[i].getPublisher());
 		if (lowerCasePublisher.find(lowerCaseKeyWord) != std::string::npos ||
-				lowerCaseKeyWord.find(lowerCasePublisher) != std::string::npos)
+			lowerCaseKeyWord.find(lowerCasePublisher) != std::string::npos)
 			possibleBooks[numberPossibleBooks++] = books[i];
 	}
 	numPossibleBooks = numberPossibleBooks;

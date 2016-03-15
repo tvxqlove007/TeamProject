@@ -59,24 +59,31 @@ void ReportModule::display() {
 	switch (choice) {
 	case 1:
 		displayInventoryListing();
+		display();
 		break;
 	case 2:
 		displayInventoryWholesaleValue();
+		display();
 		break;
 	case 3:
 		displayInventoryRetailValue();
+		display();
 		break;
 	case 4:
 		displayListingByQuantity();
+		display();
 		break;
 	case 5:
 		displayListingByCost();
+		display();
 		break;
 	case 6:
 		displayListingByAge();
+		display();
 		break;
 	case 7:
 		displayListingConfiguration();
+		display();
 		break;
 	case 8:
 		Module::showMainMenu();
@@ -85,7 +92,22 @@ void ReportModule::display() {
 }
 
 void ReportModule::displayInventoryListing() {
-	display();
+	system("CLS");
+	Book * books = BookDAO::getInstance()->getBooks();
+	cout << "   ";
+	printOut("ISBN", 20);
+	printOut("Title", 22);
+	printOut("Author", 19);
+	printOut("Publisher", 15);
+	cout << "\n------------------------------------------------------------------------------" << endl;
+	for (int i = 0; i < BookDAO::getInstance()->getNumBooks(); i++) {
+		printOut(books[i].getIsbn(), 20);
+		printOut(books[i].getTitle(), 25);
+		printOut(books[i].getAuthor(), 19);
+		printOut(books[i].getPublisher(), 15);
+		cout << endl;
+	}
+	system("pause");
 }
 
 void ReportModule::displayInventoryWholesaleValue() {
@@ -106,7 +128,6 @@ void ReportModule::displayInventoryWholesaleValue() {
 		cout << endl;
 	}
 	system("pause");
-	display();
 }
 
 void ReportModule::displayInventoryRetailValue() {
@@ -127,7 +148,7 @@ void ReportModule::displayInventoryRetailValue() {
 		cout << endl;
 	}
 	system("pause");
-	display();
+
 }
 
 void ReportModule::displayListingByQuantity() {
@@ -148,11 +169,11 @@ void ReportModule::displayListingByQuantity() {
 		cout << endl;
 	}
 	system("pause");
-	display();
+
 }
 
 void ReportModule::displayListingByCost() {
-	display();
+
 }
 
 void ReportModule::displayListingByAge() {
@@ -173,7 +194,7 @@ void ReportModule::displayListingByAge() {
 		cout << endl;
 	}
 	system("pause");
-	display();
+
 }
 
 void ReportModule::displayListingConfiguration() {
@@ -205,5 +226,5 @@ void ReportModule::displayListingConfiguration() {
 		break;
 	}
 	system("pause");
-	display();
+
 }

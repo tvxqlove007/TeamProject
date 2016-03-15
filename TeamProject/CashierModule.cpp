@@ -12,6 +12,8 @@
 using namespace std;
 
 CashierModule * CashierModule::cashierModule;
+int CashierModule::numberPurchaseBook = 0;
+Book CashierModule::purchaseBooks[1024];
 
 CashierModule::CashierModule() {
 	setName("Cashier Module");
@@ -34,7 +36,7 @@ void CashierModule::display() {
 	system("CLS");
 	cout << "Serendipity Book Sellers" << endl << endl;
 	cout << "Date: " << datePurchase << endl << endl;
-	cout << " Qty\tISBN\t\tTitle\t\t\tPrice\t\tTotal" << endl;
+
 	cout << "___________________________________________________________________________" << endl << endl;
 	cout << "\t\t Subtotal:    " << endl;
 	cout << "\t\t Tax:         " << endl;

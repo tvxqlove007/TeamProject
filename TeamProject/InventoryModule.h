@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Module.h"
+#include "Book.h"
 
 using namespace std;
 
@@ -19,11 +20,28 @@ private:
 	InventoryModule();
 
 public:
+
+	static const int SHOW_ISBN;
+	static const int SHOW_TITLE;
+	static const int SHOW_AUTHOR;
+	static const int SHOW_PUBLISHER;
+	static const int SHOW_DATE;
+	static const int SHOW_QUANTITY;
+	static const int SHOW_WHOLESALE;
+	static const int SHOW_RETAIL_PRICE;
+
 	static InventoryModule * getInstance();
+
+	string askForISBN();
+	int showChoices(int lowerBound, int upperBound);
 
 	void display();
 	void displayLookUpMenu();
 	void displayAdd();
+	void displayOptionsAfterLookUp(int thingToShow, Book bookObtained);
+	void displayEdit();
+	bool displayEditOptions(string isbn);
+	void displayDelete();
 
 	void showBooksByISBN();
 	void showBooksByTitle();

@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Module.h"
+#include "Book.h"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ private:
 	CashierModule();
 
 public:
+	static int numberPurchaseBook;
+	static Book purchaseBooks[1024];
 
 	char * getDatePurchase();
 	static CashierModule * getInstance();
